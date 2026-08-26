@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             x:Class="PrintLabels.MainPage"
+             BackgroundColor="#0d1117">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16" VerticalOptions="StartAndExpand">
+
+            <!-- Header Row: Title + Buttons -->
+            <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,0,0,16">
+                <Label Grid.Column="0"
+                       Text="ItemCode"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#f0f6fc" />
+                
+                <!-- Settings Button -->
+                <Button Grid.Column="1"
+                        Text="&#xf013;"
+                        FontFamily="FontAwesome"
+                        FontSize="18"
+                        TextColor="#2563eb"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Clicked="OnSettingsClicked"
+                        HorizontalOptions="End"
+                        Margin="8,0,0,0"
+                        Padding="0"/>
+                
+                <!-- Logout Button -->
+                <Button Grid.Column="2"
+                        Text="&#xf08b;"
+                        FontFamily="FontAwesome"
+                        FontSize="18"
+                        TextColor="#dc2626"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Clicked="OnLogoutClicked"
+                        HorizontalOptions="End"
+                        Margin="8,0,0,0"
+                        Padding="0"/>
+            </Grid>
+
+            <!-- Input -->
+            <Border Stroke="#30363d" StrokeShape="RoundRectangle 8" Background="#161b22" Padding="12,0">
+                <Entry x:Name="ItemEntry"
+                       Placeholder="Enter item code"
+                       PlaceholderColor="#8b949e"
+                       TextColor="#c9d1d9"
+                       Keyboard="Text"
+                       Completed="OnItemCompleted"/>
+            </Border>
+
+            <!-- Loading Spinner (hidden by default) -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="False"
+                               IsVisible="False"
+                               Color="#58a6ff"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="0,16,0,0"/>
+
+            <!-- Error Label -->
+            <Label x:Name="ErrorLabel"
+                   TextColor="#f85149"
+                   FontSize="13"
+                   HorizontalOptions="Center"
+                   IsVisible="False"
+                   Margin="0,8,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

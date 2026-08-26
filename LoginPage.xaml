@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             x:Class="PrintLabels.LoginPage"
+             BackgroundColor="#0d1117">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="32" Spacing="20" VerticalOptions="Center">
+
+            <!-- Logo -->
+            <Border HorizontalOptions="Center" WidthRequest="80" HeightRequest="80"
+                    Stroke="#30363d" StrokeShape="RoundRectangle 16"
+                    Background="#161b22">
+                <Label Text="&#xf494;" FontFamily="FontAwesome" FontSize="40"
+                       TextColor="#58a6ff" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+
+            <Label Text="Excel Warehouse"
+                   FontSize="32" FontAttributes="Bold" TextColor="#f0f6fc"
+                   HorizontalOptions="Center" Margin="0,0,0,4"/>
+
+            <Label Text="Sign in to continue"
+                   FontSize="15" TextColor="#8b949e"
+                   HorizontalOptions="Center" Margin="0,0,0,12"/>
+
+            <!-- Username -->
+            <Border Stroke="#30363d" StrokeShape="RoundRectangle 8" Background="#161b22" Padding="12,0">
+                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#8b949e"/>
+                    <Entry x:Name="UsernameEntry"
+                           Placeholder="Username" PlaceholderColor="#8b949e"
+                           TextColor="#c9d1d9"
+                           Keyboard="Email"
+                           Completed="OnUsernameCompleted"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Password -->
+            <Border Stroke="#30363d" StrokeShape="RoundRectangle 8" Background="#161b22" Padding="12,0">
+                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#8b949e"/>
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="Password" PlaceholderColor="#8b949e"
+                           TextColor="#c9d1d9"
+                           IsPassword="True"
+                           Completed="OnLoginClicked"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Login Button -->
+            <Border Stroke="Transparent" StrokeShape="RoundRectangle 25" Background="#2563eb" HorizontalOptions="Fill">
+                <Button x:Name="LoginButton"
+                        Text="&#xf090;  Sign In"
+                        FontFamily="FontAwesome" FontSize="17" FontAttributes="Bold"
+                        TextColor="#ffffff"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        HeightRequest="50"
+                        Clicked="OnLoginClicked"/>
+            </Border>
+
+            <!-- Error -->
+            <Label x:Name="ErrorLabel"
+                   TextColor="#f85149" FontSize="13"
+                   HorizontalOptions="Center"
+                   IsVisible="False" Margin="0,8,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

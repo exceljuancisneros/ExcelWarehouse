@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             x:Class="PrintLabels.LabelPreviewPage"
+             BackgroundColor="#ffffff">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="8" Spacing="8">
+
+            <!-- Label Preview Card (white background, black borders) -->
+            <Border Background="#ffffff" Stroke="#000000" StrokeShape="RoundRectangle 0" StrokeThickness="2">
+                <VerticalStackLayout Spacing="4" Padding="10">
+
+                    <!-- Top Row: Su-Sa (7 columns horizontal) -->
+                    <Grid ColumnDefinitions="*,*,*,*,*,*,*" RowDefinitions="Auto,Auto">
+                        <!-- Day labels -->
+                        <Label Grid.Row="0" Grid.Column="0" Text="Su" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Mo" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="2" Text="Tu" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="3" Text="We" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="4" Text="Th" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="5" Text="Fr" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="6" Text="Sa" FontSize="14" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        
+                        <!-- Values -->
+                        <Label Grid.Row="1" Grid.Column="0" x:Name="lblVer1" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="1" x:Name="lblVer2" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="2" x:Name="lblVer3" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="3" x:Name="lblVer4" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="4" x:Name="lblVer5" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="5" x:Name="lblVer6" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="6" x:Name="lblVer7" Text="000" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Grid>
+                    
+                    <!-- Divider line -->
+                    <BoxView HeightRequest="1" Color="#000000" Margin="0,4,0,4"/>
+
+                    <!-- Middle Row: Location + Arrow (horizontal) -->
+                    <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto">
+                        <!-- Labels -->
+                        <Label Grid.Row="0" Grid.Column="0" Text="WAREHOUSE" FontSize="12" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="AISLE" FontSize="12" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="2" Text="COLUMN" FontSize="12" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="3" Text="LEVEL" FontSize="12" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="4" Text="SPOT" FontSize="12" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        
+                        <!-- Values -->
+                        <Label Grid.Row="1" Grid.Column="0" x:Name="lblWarehouse" Text="0" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="1" x:Name="lblAisle" Text="0" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="2" x:Name="lblColumn" Text="0" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="3" x:Name="lblLevel" Text="0" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="4" x:Name="lblSpot" Text="0" FontSize="20" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Grid>
+                    
+                    <!-- Divider line -->
+                    <BoxView HeightRequest="1" Color="#000000" Margin="0,4,0,4"/>
+
+                    <!-- Bottom Row: QR Code + ItemNumber + ItemCodeDesc -->
+                    <HorizontalStackLayout Spacing="15" HorizontalOptions="Fill">
+                        <Image x:Name="qrCodeImage" HeightRequest="80" WidthRequest="80" HorizontalOptions="Start"/>
+                        <VerticalStackLayout Spacing="2" HorizontalOptions="Fill">
+                            <Label x:Name="lblItemNumber" Text="000000" FontSize="18" TextColor="#000000" FontAttributes="Bold"/>
+                            <Label x:Name="lblItemCodeDesc" Text="ITEM DESCRIPTION" FontSize="14" TextColor="#000000" FontAttributes="Bold" LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                    
+                    <!-- Divider line -->
+                    <BoxView HeightRequest="1" Color="#000000" Margin="0,4,0,4"/>
+
+                    <!-- Footer: Comment -->
+                    <Label x:Name="lblComment" Text="??????" FontSize="16" TextColor="#000000" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons Section -->
+            <!-- Quantity Selector + Print Button -->
+            <Border StrokeShape="RoundRectangle 8" Background="#f0f0f0" Stroke="#cccccc" HorizontalOptions="Fill">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="10,2,10,2">
+                    <sf:SfButton x:Name="MinusButton" Text="-" FontSize="16" FontAttributes="Bold"
+                                 TextColor="#333333" BackgroundColor="Transparent"
+                                 WidthRequest="36" HeightRequest="36"
+                                 Clicked="OnQuantityMinusClicked"/>
+                    <Label x:Name="QuantityLabel" Text="1" FontSize="16" TextColor="#333333" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <sf:SfButton x:Name="PlusButton" Text="+" FontSize="16" FontAttributes="Bold"
+                                 TextColor="#333333" BackgroundColor="Transparent"
+                                 WidthRequest="36" HeightRequest="36"
+                                 Clicked="OnQuantityPlusClicked"/>
+                    <sf:SfButton x:Name="PrintButton" Text="&#xf02f;  PRINT"
+                                 FontFamily="FontAwesome" FontSize="14"
+                                 TextColor="#ffffff"
+                                 BackgroundColor="#059669"
+                                 HeightRequest="36"
+                                 Clicked="OnPrintNowClicked"/>
+                    <sf:SfButton x:Name="IPrintButton" Text="&#xf02f;  IPPRINT"
+                                 FontFamily="FontAwesome" FontSize="14"
+                                 TextColor="#ffffff"
+                                 BackgroundColor="#7c3aed"
+                                 HeightRequest="36"
+                                 Clicked="OnIPrintNowClicked"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Print Another Button -->
+            <Border StrokeShape="RoundRectangle 10" HorizontalOptions="Fill">
+                <sf:SfButton Text="&#xf062;  Print Another"
+                             FontFamily="FontAwesome" FontSize="15"
+                             TextColor="#ffffff"
+                             BackgroundColor="#2563eb"
+                             HeightRequest="45"
+                             Clicked="OnPrintAnotherClicked"/>
+            </Border>
+
+            <!-- Back Button -->
+            <Border StrokeShape="RoundRectangle 10" HorizontalOptions="Center">
+                <sf:SfButton Text="&#xf053;  Back to Menu"
+                             FontFamily="FontAwesome" FontSize="14"
+                             TextColor="#ffffff"
+                             BackgroundColor="#2563eb"
+                             HeightRequest="40"
+                             Clicked="OnBackClicked"/>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
