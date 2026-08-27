@@ -31,9 +31,6 @@ public partial class LabelPreviewPage : ContentPage
     private readonly string _ver6;
     private readonly string _ver7;
 
-    private static readonly string arrowDownHex = 
-        "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFFFE7FFFFFFDFE7FBFFFF9FE7F9FFFF8FE7F1FFFF8FE7F1FFFF87E7E1FFFFC3E7C3FFFFE3E7C7FFFFE1E787FFFFF1E78FFFFFF0E70FFFFFF8E71FFFFFF8661FFFFFFC243FFFFFFE247FFFFFFE007FFFFFFF00FFFFFFFF00FFFFFFFF81FFFFFFFF81FFFFFFFFC3FFFFFFFFE7FFFFFFFFE7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
-
     public LabelPreviewPage(
         MainPage mainPage,
         string itemNumber,
@@ -185,7 +182,7 @@ public partial class LabelPreviewPage : ContentPage
         sb.AppendLine("^LS0");
 
         // Day labels - using ^FH\ (single backslash)
-        string fh = "^FH\\";
+        string fh = "^FH\\\\";
         sb.AppendLine("^FT78,126^A0B,34,33" + fh + "^FDSa^FS");
         sb.AppendLine("^FT80,305^A0B,34,33" + fh + "^FDFr^FS");
         sb.AppendLine("^FT80,474^A0B,34,33" + fh + "^FDTh^FS");
@@ -221,15 +218,59 @@ public partial class LabelPreviewPage : ContentPage
         sb.AppendLine("^FT464,820^A0B,56,55" + fh + "^FD" + _itemCodeDesc + "^FS");
         sb.AppendLine("^FT464,1054^A0B,56,55" + fh + "^FD" + _itemNumber + "^FS");
 
-        // Arrow: down arrow image for level 1 (40x70 bitmap)
-        // UP arrow: just a simple line (up arrow not needed for level 1)
+        // Arrow: down arrow for level 1 (V-shape using font B 'o' and 'x' characters)
+        // Arrow: up arrow for levels 2+ (inverted V-shape)
         if (_level == "1")
         {
-            sb.AppendLine("^FO240,50^GFA,350,40,40,A," + arrowDownHex + "^FS");
-        }
+            // DOWN arrow
+            sb.AppendLine("^FT360,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT360,100^A0B,34,33" + fh + "^FDx^FS");
 
-        // Test line
-        sb.AppendLine("^FT670,100^FH^FD V^FS");
+            sb.AppendLine("^FT330,85^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT330,85^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT330,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT330,100^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT330,115^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT330,115^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT300,70^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,70^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT300,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,100^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT300,130^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,130^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT270,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT270,100^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT240,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT240,100^A0B,34,33" + fh + "^FDx^FS");
+        }
+        else
+        {
+            // UP arrow
+            sb.AppendLine("^FT360,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT360,100^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT330,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT330,100^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT300,70^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,70^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT300,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,100^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT300,130^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT300,130^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT270,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT270,100^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT240,100^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT240,100^A0B,34,33" + fh + "^FDx^FS");
+
+            sb.AppendLine("^FT270,85^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT270,85^A0B,34,33" + fh + "^FDx^FS");
+            sb.AppendLine("^FT270,115^A0B,34,33" + fh + "^FDo^FS");
+            sb.AppendLine("^FT270,115^A0B,34,33" + fh + "^FDx^FS");
+        }
 
         // QR Code
         sb.AppendLine("^FO384,1056^BQN,2,4^FDMA," + _itemNumber + "^FS");
