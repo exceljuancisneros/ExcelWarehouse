@@ -17,6 +17,10 @@ public partial class MainPage : ContentPage
     {
         _username = username;
         InitializeComponent();
+        // Focus ItemCode when page appears
+        Appearing += (s, e) => {
+            ItemEntry.Focus();
+        };
     }
 
     public async Task FocusEntryAsync()
@@ -33,7 +37,7 @@ public partial class MainPage : ContentPage
 
     private void OnSettingsClicked(object sender, EventArgs e)
     {
-        Navigation.PushAsync(new BluetoothSettingsPage());
+        Navigation.PushAsync(new BluetoothSettingsPage(this));
     }
 
     private async void OnItemCompleted(object sender, EventArgs e)

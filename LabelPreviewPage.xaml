@@ -75,52 +75,65 @@
             </Border>
 
             <!-- Action Buttons Section -->
-            <!-- Quantity Selector + Print Button -->
-            <Border StrokeShape="RoundRectangle 8" Background="#f0f0f0" Stroke="#cccccc" HorizontalOptions="Fill">
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="10,2,10,2">
-                    <sf:SfButton x:Name="MinusButton" Text="-" FontSize="16" FontAttributes="Bold"
-                                 TextColor="#333333" BackgroundColor="Transparent"
-                                 WidthRequest="36" HeightRequest="36"
+            <VerticalStackLayout Spacing="8" Padding="10">
+                
+                <!-- Row 1: Quantity Controls (- / +) -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <sf:SfButton x:Name="MinusButton" Text="&#xf068;"
+                                 FontFamily="FontAwesome"
+                                 FontSize="18"
+                                 TextColor="#ffffff"
+                                 Background="#ef4444"
+                                 WidthRequest="40" HeightRequest="40"
+                                 HorizontalTextAlignment="Center"
+                                 VerticalTextAlignment="Center"
                                  Clicked="OnQuantityMinusClicked"/>
-                    <Label x:Name="QuantityLabel" Text="1" FontSize="16" TextColor="#333333" FontAttributes="Bold" VerticalOptions="Center"/>
-                    <sf:SfButton x:Name="PlusButton" Text="+" FontSize="16" FontAttributes="Bold"
-                                 TextColor="#333333" BackgroundColor="Transparent"
-                                 WidthRequest="36" HeightRequest="36"
+                    <Label x:Name="QuantityLabel" Text="1" FontSize="20" TextColor="#333333" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <sf:SfButton x:Name="PlusButton" Text="&#xf067;"
+                                 FontFamily="FontAwesome"
+                                 FontSize="18"
+                                 TextColor="#ffffff"
+                                 Background="#22c55e"
+                                 WidthRequest="40" HeightRequest="40"
+                                 HorizontalTextAlignment="Center"
+                                 VerticalTextAlignment="Center"
                                  Clicked="OnQuantityPlusClicked"/>
-                    <sf:SfButton x:Name="PrintButton" Text="&#xf02f;  PRINT"
-                                 FontFamily="FontAwesome" FontSize="14"
+                </HorizontalStackLayout>
+
+                <!-- Row 2: Print & IPPrint -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <sf:SfButton x:Name="PrintButton" Text="&#xf02f; PRINT"
+                                 FontFamily="FontAwesome"
+                                 FontSize="16"
                                  TextColor="#ffffff"
-                                 BackgroundColor="#059669"
-                                 HeightRequest="36"
+                                 Background="#059669"
+                                 WidthRequest="110" HeightRequest="45"
+                                 HorizontalTextAlignment="Center"
+                                 VerticalTextAlignment="Center"
                                  Clicked="OnPrintNowClicked"/>
-                    <sf:SfButton x:Name="IPrintButton" Text="&#xf02f;  IPPRINT"
-                                 FontFamily="FontAwesome" FontSize="14"
-                                 TextColor="#ffffff"
-                                 BackgroundColor="#7c3aed"
-                                 HeightRequest="36"
+                    <sf:SfButton x:Name="IPrintButton" Text="&#xf02f; IPPRINT"
+                                 FontFamily="FontAwesome"
+                                 FontSize="16"
+                                 TextColor="#000000"
+                                 Background="#f59e0b"
+                                 WidthRequest="130" HeightRequest="45"
+                                 HorizontalTextAlignment="Center"
+                                 VerticalTextAlignment="Center"
                                  Clicked="OnIPrintNowClicked"/>
                 </HorizontalStackLayout>
-            </Border>
 
-            <!-- Print Another Button -->
-            <Border StrokeShape="RoundRectangle 10" HorizontalOptions="Fill">
-                <sf:SfButton Text="&#xf062;  Print Another"
-                             FontFamily="FontAwesome" FontSize="15"
+                <!-- Row 3: Print Another -->
+                <sf:SfButton Text="PRINT ANOTHER"
+                             FontSize="16"
                              TextColor="#ffffff"
-                             BackgroundColor="#2563eb"
-                             HeightRequest="45"
+                             Background="#2563eb"
+                             WidthRequest="200" HeightRequest="45"
+                             HorizontalOptions="Center"
+                             HorizontalTextAlignment="Center"
+                             VerticalTextAlignment="Center"
                              Clicked="OnPrintAnotherClicked"/>
-            </Border>
 
-            <!-- Back Button -->
-            <Border StrokeShape="RoundRectangle 10" HorizontalOptions="Center">
-                <sf:SfButton Text="&#xf053;  Back to Menu"
-                             FontFamily="FontAwesome" FontSize="14"
-                             TextColor="#ffffff"
-                             BackgroundColor="#2563eb"
-                             HeightRequest="40"
-                             Clicked="OnBackClicked"/>
-            </Border>
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>

@@ -12,9 +12,12 @@ public partial class BluetoothSettingsPage : ContentPage
     private BluetoothScanner? _scanner;
     private bool _isScanning = false;
 
-    public BluetoothSettingsPage()
+    private readonly MainPage _mainPage;
+
+    public BluetoothSettingsPage(MainPage mainPage)
     {
         InitializeComponent();
+        _mainPage = mainPage;
         _availablePrinters = new ObservableCollection<BluetoothDeviceWrapper>();
         PrinterList.ItemsSource = _availablePrinters;
 
@@ -235,16 +238,17 @@ public partial class BluetoothSettingsPage : ContentPage
             Preferences.Set("SelectedPrinterAddress", _selectedPrinter.Address);
             Preferences.Set("SelectedPrinterName", _selectedPrinter.Name);
             SelectedPrinterLabel.Text = _selectedPrinter.Name;
-            
             StatusLabel.Text = $"&#xf00c;  Printer: {_selectedPrinter.Name}";
             StatusLabel.TextColor = Color.FromArgb("#3fb950");
-            
-            await DisplayAlertAsync("Success", $"Printer {_selectedPrinter.Name} saved!", "OK");
         }
         else
         {
             await DisplayAlertAsync("Error", "Please select a printer first.", "OK");
+            return;
         }
+
+        // Navigate back to ItemCode Search Page
+        await Navigation.PopAsync(animated: true);
     }
 
     private void OnBackClicked(object sender, EventArgs e)
