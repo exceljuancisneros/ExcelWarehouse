@@ -3,44 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="PrintLabels.MainPage"
-             BackgroundColor="#0d1117">
+             BackgroundColor="#0d1117"
+             NavigationPage.HasNavigationBar="false">
 
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="16" VerticalOptions="StartAndExpand">
 
-            <!-- Header Row: Title + Buttons -->
-            <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,0,0,16">
-                <Label Grid.Column="0"
-                       Text="ItemCode"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="#f0f6fc" />
-                
+            <!-- Header Row: Settings + Title + Logout -->
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12,16,0">
                 <!-- Settings Button -->
-                <Button Grid.Column="1"
-                        Text="&#xf013;"
-                        FontFamily="FontAwesome"
+                <Button Grid.Column="0"
+                        Text="⚙️"
                         FontSize="18"
                         TextColor="#2563eb"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         Clicked="OnSettingsClicked"
-                        HorizontalOptions="End"
-                        Margin="8,0,0,0"
                         Padding="0"/>
                 
-                <!-- Logout Button -->
+                <!-- Title (centered) -->
+                <Label Grid.Column="1"
+                       Text="ItemCode"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#f0f6fc"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"/>
+                
+                <!-- Logout Button (top-right) -->
                 <Button Grid.Column="2"
-                        Text="&#xf08b;"
-                        FontFamily="FontAwesome"
+                        Text="🚪"
                         FontSize="18"
                         TextColor="#dc2626"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
-                        Clicked="OnLogoutClicked"
-                        HorizontalOptions="End"
-                        Margin="8,0,0,0"
-                        Padding="0"/>
+                        Clicked="OnLogoutClicked"/>
             </Grid>
 
             <!-- Input -->

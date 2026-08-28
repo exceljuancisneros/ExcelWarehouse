@@ -9,7 +9,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
-		<ApplicationTitle>PrintLabels</ApplicationTitle>
+		<ApplicationTitle>Excel Warehouse</ApplicationTitle>
 		<ApplicationId>com.companyname.printlabels</ApplicationId>
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>

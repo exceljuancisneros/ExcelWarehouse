@@ -3,33 +3,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="PrintLabels.MenuPage"
-             BackgroundColor="#0d1117">
+             BackgroundColor="#0d1117"
+             NavigationPage.HasNavigationBar="false">
 
-    <Grid>
-        <!-- Header Row with Logout Button -->
-        <Grid ColumnDefinitions="*,Auto" Padding="24,16,24,0">
-            <Label Grid.Column="0"
-                   Text="Excel Warehouse"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="#f0f6fc" />
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header Row -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,12,16,0">
+            <!-- Left spacer to balance title centering -->
+            <BoxView Grid.Column="0" WidthRequest="36" HeightRequest="36" 
+                     Background="Transparent" VerticalOptions="Center"/>
             
-            <!-- Logout Button -->
-            <Button Grid.Column="1"
-                    Text="&#xf08b;"
-                    FontFamily="FontAwesome"
-                    FontSize="18"
+            <!-- Title (centered) -->
+            <Label Grid.Column="1"
+                   Text="Excel Warehouse"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#f0f6fc"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+            
+            <!-- Logout Button (top-right) -->
+            <Button Grid.Column="2"
+                    Text="🚪"
+                    FontSize="22"
                     TextColor="#dc2626"
                     BackgroundColor="Transparent"
-                    BorderColor="Transparent"
-                    Clicked="OnLogoutClicked"
-                    HorizontalOptions="End"
-                    Margin="8,0,0,0"
-                    Padding="0"/>
+                    Clicked="OnLogoutClicked"/>
         </Grid>
 
-        <ScrollView>
-            <VerticalStackLayout Padding="24" Spacing="16" VerticalOptions="Center" Margin="0,60,0,0">
+        <!-- Body Content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="16" Margin="0,20,0,0">
 
             <!-- Title -->
             <Border HorizontalOptions="Center" WidthRequest="70" HeightRequest="70"
@@ -62,16 +66,13 @@
                                TextColor="#ffffff" HorizontalOptions="Center" VerticalOptions="Center"/>
                     </Border>
 
-                    <!-- Text -->
+                    <!-- VerticalStackLayout for Text -->
                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Start">
                         <Label Text="Print Labels"
                                FontSize="18" FontAttributes="Bold" TextColor="#f0f6fc"/>
                         <Label Text="Scan or type an item to print a label"
                                FontSize="13" TextColor="#8b949e"/>
                     </VerticalStackLayout>
-
-                    <!-- Arrow -->
-                    <Label Text="&#xf054;" FontFamily="FontAwesome" FontSize="18" TextColor="#8b949e" HorizontalOptions="EndAndExpand"/>
                 </HorizontalStackLayout>
             </Border>
 
@@ -89,8 +90,6 @@
                         <Label Text="New feature coming soon"
                                FontSize="13" TextColor="#6e7681"/>
                     </VerticalStackLayout>
-
-                    <Label Text="&#xf054;" FontFamily="FontAwesome" FontSize="18" TextColor="#6e7681" HorizontalOptions="EndAndExpand"/>
                 </HorizontalStackLayout>
             </Border>
 
