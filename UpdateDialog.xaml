@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PrintLabels.UpdateDialog"
+             BackgroundColor="#0d1117">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="32" Spacing="20" VerticalOptions="Center" HorizontalOptions="Fill">
+
+            <!-- Icon -->
+            <Border HorizontalOptions="Center" WidthRequest="60" HeightRequest="60"
+                    Stroke="#30363d" StrokeShape="RoundRectangle 12"
+                    Background="#161b22">
+                <Label Text="&#xf01b;" FontFamily="FontAwesome" FontSize="32"
+                       TextColor="#f0883e" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+
+            <!-- Title -->
+            <Label Text="Update Available"
+                   FontSize="24" FontAttributes="Bold" TextColor="#f0f6fc"
+                   HorizontalOptions="Center"/>
+
+            <!-- Version Info -->
+            <Label x:Name="VersionLabel"
+                   FontSize="16" TextColor="#8b949e"
+                   HorizontalOptions="Center" Margin="0,0,0,12"/>
+
+            <!-- Info Box -->
+            <Border Stroke="#30363d" StrokeShape="RoundRectangle 8" Background="#161b22" Padding="16">
+                <Label Text="A new version of Excel Warehouse is available. Please update to get the latest features and bug fixes."
+                       FontSize="14" TextColor="#c9d1d9"
+                       LineHeight="1.5"/>
+            </Border>
+
+            <!-- Buttons -->
+            <Border Stroke="Transparent" StrokeShape="RoundRectangle 25" Background="#2563eb" HorizontalOptions="Fill">
+                <Button x:Name="UpdateButton"
+                        Text="&#xf019;  Update Now"
+                        FontFamily="FontAwesome" FontSize="16" FontAttributes="Bold"
+                        TextColor="#ffffff"
+                        BackgroundColor="Transparent"
+                        HeightRequest="50"
+                        Clicked="OnUpdateClicked"/>
+            </Border>
+
+            <Border Stroke="#30363d" StrokeShape="RoundRectangle 25" Background="Transparent" HorizontalOptions="Fill">
+                <Button x:Name="LaterButton"
+                        Text="Later"
+                        FontSize="16" TextColor="#8b949e"
+                        BackgroundColor="Transparent"
+                        BorderColor="#30363d"
+                        BorderWidth="1"
+                        HeightRequest="50"
+                        Clicked="OnLaterClicked"/>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

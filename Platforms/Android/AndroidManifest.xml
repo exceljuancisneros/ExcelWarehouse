@@ -15,4 +15,9 @@
 		<!-- Android 12+ Bluetooth permissions (runtime) -->
 		<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 		<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+		<!-- Storage permission for downloading updates -->
+		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+		<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+		<!-- Android 13+ notifications permission -->
+		<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 	</manifest>
