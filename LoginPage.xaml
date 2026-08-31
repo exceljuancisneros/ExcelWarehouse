@@ -45,6 +45,13 @@
                            TextColor="#c9d1d9"
                            IsPassword="True"
                            Completed="OnLoginClicked"/>
+                    <Label x:Name="EyeIcon"
+                           Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#8b949e"
+                           HorizontalOptions="End" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnEyeIconTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
                 </HorizontalStackLayout>
             </Border>
 

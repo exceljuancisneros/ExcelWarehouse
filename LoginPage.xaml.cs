@@ -1,23 +1,9 @@
 namespace PrintLabels;
 
-public static class UserRepository
-{
-    private static readonly Dictionary<string, string> _users = new()
-    {
-        { "admin", "Admin@1234!" },
-        { "warehouse", "Excel.2026" }
-    };
-
-    public static bool Authenticate(string username, string password)
-    {
-        if (_users.TryGetValue(username.Trim().ToLower(), out var expected))
-            return expected == password;
-        return false;
-    }
-}
-
 public partial class LoginPage : ContentPage
 {
+    private bool _isPasswordVisible = false;
+
     public LoginPage()
     {
         InitializeComponent();
@@ -32,6 +18,13 @@ public partial class LoginPage : ContentPage
     private void OnUsernameCompleted(object sender, EventArgs e)
     {
         PasswordEntry.Focus();
+    }
+
+    private void OnEyeIconTapped(object sender, EventArgs e)
+    {
+        _isPasswordVisible = !_isPasswordVisible;
+        PasswordEntry.IsPassword = !_isPasswordVisible;
+        EyeIcon.Text = _isPasswordVisible ? "\uf070" : "\uf06e";
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
@@ -60,13 +53,14 @@ public partial class LoginPage : ContentPage
 
         await Task.Delay(300);
 
-        if (UserRepository.Authenticate(username, password))
+        var (isAuthenticated, errorMessage) = await UserRepository.AuthenticateAsync(username, password);
+        if (isAuthenticated)
         {
             await Navigation.PushAsync(new MenuPage(username));
         }
         else
         {
-            ErrorLabel.Text = "Invalid username or password.";
+            ErrorLabel.Text = errorMessage ?? "Invalid username or password.";
             ErrorLabel.IsVisible = true;
         }
 
