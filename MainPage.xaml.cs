@@ -1,21 +1,20 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Text.Json;
 
 namespace PrintLabels;
 
 public partial class MainPage : ContentPage
 {
     private readonly string _username;
+    private readonly HttpClient _httpClient;
     
-    // SQL Server connection
-    private const string Server = "192.168.211.17";
-    private const string Database = "WItemLocations";
-    private const string Username = "Excel_Apps";
-    private const string Password = "!Excel.2019@!";
-    private const string ViewName = "Find_Label_Items";
+    // API Server connection
+    private const string ApiUrl = "http://192.168.211.17:8080/api";
 
     public MainPage(string username)
     {
         _username = username;
+        _httpClient = new HttpClient();
+        _httpClient.Timeout = TimeSpan.FromSeconds(10);
         InitializeComponent();
         // Focus ItemCode when page appears
         Appearing += (s, e) => {
@@ -57,8 +56,8 @@ public partial class MainPage : ContentPage
             LoadingIndicator.IsVisible = true;
             ErrorLabel.IsVisible = false;
 
-            // Query SQL Server
-            var product = await GetItemFromDatabase(itemCode);
+            // Query the API
+            var product = await GetItemFromApi(itemCode);
             
             if (product != null)
             {
@@ -90,9 +89,9 @@ public partial class MainPage : ContentPage
                 ErrorLabel.IsVisible = true;
             }
         }
-        catch (SqlException sqlEx)
+        catch (TaskCanceledException)
         {
-            ErrorLabel.Text = $"Database error: {sqlEx.Message}";
+            ErrorLabel.Text = "API connection timed out. Please check your network connection.";
             ErrorLabel.IsVisible = true;
         }
         catch (Exception ex)
@@ -107,56 +106,83 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private static async Task<ItemData?> GetItemFromDatabase(string itemCode)
+    private async Task<ItemData?> GetItemFromApi(string itemCode)
     {
-        var connectionString = $"Server=tcp:{Server};Database={Database};User Id={Username};Password={Password};TrustServerCertificate=true;Encrypt=false;Connect Timeout=10;";
-        
-        return await Task.Run(() =>
+        try
         {
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
-            
-            // Query the view by ItemNumber (since ItemCode column doesn't exist)
-            var query = $@"SELECT TOP 1 * FROM {ViewName} 
-                           WHERE ItemNumber = @ItemCode OR ItemCodeDesc = @ItemCode";
-            
-            using var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ItemCode", itemCode);
-            
-            using var reader = command.ExecuteReader();
-            if (reader.Read())
+            var requestBody = new { ItemCode = itemCode };
+            var json = System.Text.Json.JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{ApiUrl}/item/search", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            var result = System.Text.Json.JsonSerializer.Deserialize<ItemApiResponse>(responseJson);
+
+            if (result != null && result.success)
             {
                 return new ItemData
                 {
-                    ItemNumber = reader["ItemNumber"]?.ToString() ?? "",
-                    ItemCodeDesc = reader["ItemCodeDesc"]?.ToString() ?? "",
-                    Facility = reader["Facility"]?.ToString() ?? "",
-                    Warehouse = reader["Warehouse"]?.ToString() ?? "",
-                    Aisle = reader["Aisle"]?.ToString() ?? "",
-                    Column = reader["Column"]?.ToString() ?? "",
-                    Level = reader["Level"]?.ToString() ?? "",
-                    Arrow = reader["Arrow"]?.ToString() ?? "",
-                    Spot = reader["Spot"]?.ToString() ?? "",
-                    Comment = reader["Comment"]?.ToString() ?? "",
-                    Ver1 = reader["Ver1"]?.ToString() ?? "",
-                    Ver2 = reader["Ver2"]?.ToString() ?? "",
-                    Ver3 = reader["Ver3"]?.ToString() ?? "",
-                    Ver4 = reader["Ver4"]?.ToString() ?? "",
-                    Ver5 = reader["Ver5"]?.ToString() ?? "",
-                    Ver6 = reader["Ver6"]?.ToString() ?? "",
-                    Ver7 = reader["Ver7"]?.ToString() ?? ""
+                    ItemNumber = result.itemNumber,
+                    ItemCodeDesc = result.itemCodeDesc,
+                    Facility = result.facility,
+                    Warehouse = result.warehouse,
+                    Aisle = result.aisle,
+                    Column = result.column,
+                    Level = result.level,
+                    Arrow = result.arrow,
+                    Spot = result.spot,
+                    Comment = result.comment,
+                    Ver1 = result.ver1,
+                    Ver2 = result.ver2,
+                    Ver3 = result.ver3,
+                    Ver4 = result.ver4,
+                    Ver5 = result.ver5,
+                    Ver6 = result.ver6,
+                    Ver7 = result.ver7
                 };
             }
+
             return null;
-        });
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
+}
+
+public class ItemApiResponse
+{
+    public bool success { get; set; }
+    public string itemNumber { get; set; } = "";
+    public string itemCodeDesc { get; set; } = "";
+    public string facility { get; set; } = "";
+    public string warehouse { get; set; } = "";
+    public string aisle { get; set; } = "";
+    public string column { get; set; } = "";
+    public string level { get; set; } = "";
+    public string arrow { get; set; } = "";
+    public string spot { get; set; } = "";
+    public string comment { get; set; } = "";
+    public string ver1 { get; set; } = "";
+    public string ver2 { get; set; } = "";
+    public string ver3 { get; set; } = "";
+    public string ver4 { get; set; } = "";
+    public string ver5 { get; set; } = "";
+    public string ver6 { get; set; } = "";
+    public string ver7 { get; set; } = "";
 }
 
 public class ItemData
 {
     public string ItemNumber { get; set; } = "";
     public string ItemCodeDesc { get; set; } = "";
-
     public string Facility { get; set; } = "";
     public string Warehouse { get; set; } = "";
     public string Aisle { get; set; } = "";
