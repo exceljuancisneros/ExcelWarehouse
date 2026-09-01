@@ -2,7 +2,7 @@ namespace PrintLabels;
 
 public static class UserRepository
 {
-    private const string ApiUrl = "http://192.168.210.50:8080/api/auth/login";
+    private const string ApiUrl = "http://192.168.211.17:8080/api/auth/login";
 
     public static async Task<(bool Authenticated, string ErrorMessage)> AuthenticateAsync(string username, string password)
     {
