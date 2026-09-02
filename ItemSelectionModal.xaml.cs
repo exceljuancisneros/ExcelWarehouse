@@ -22,8 +22,9 @@ public partial class ItemSelectionModal : ContentPage
     private void OnItemTapped(object sender, ItemTappedEventArgs e)
     {
         var selectedItem = (ItemData)e.Item;
+        ItemList.SelectedItem = null; // Deselect to prevent double-tap
+        Navigation.PopModalAsync(animated: true);
         _tcs.TrySetResult(selectedItem);
-        ItemList.SelectedItem = null; // Deselect after tap
     }
 
     private void OnCancelClicked(object sender, EventArgs e)
