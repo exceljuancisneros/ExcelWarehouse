@@ -7,6 +7,25 @@ public partial class LoginPage : ContentPage
     public LoginPage()
     {
         InitializeComponent();
+        VersionLabel.Text = "Version " + GetCurrentVersion();
+    }
+
+    private static string GetCurrentVersion()
+    {
+#if ANDROID
+        try
+        {
+            var packageInfo = Android.App.Application.Context.PackageManager.GetPackageInfo(
+                Android.App.Application.Context.PackageName, 0);
+            return packageInfo.VersionName ?? "1.0.0";
+        }
+        catch
+        {
+            return "1.0.0";
+        }
+#else
+        return "1.0.0";
+#endif
     }
 
     protected override void OnAppearing()

@@ -11,8 +11,8 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 		<ApplicationTitle>Excel Warehouse</ApplicationTitle>
 		<ApplicationId>com.companyname.printlabels</ApplicationId>
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>0.9</ApplicationDisplayVersion>
+		<ApplicationVersion>9</ApplicationVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 

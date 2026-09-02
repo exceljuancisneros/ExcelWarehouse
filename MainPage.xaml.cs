@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace PrintLabels;
 
@@ -57,11 +58,17 @@ public partial class MainPage : ContentPage
             ErrorLabel.IsVisible = false;
 
             // Query the API
-            var product = await GetItemFromApi(itemCode);
+            var results = await GetItemsFromApi(itemCode);
             
-            if (product != null)
+            if (results == null || results.Count == 0)
             {
-                // Navigate to preview with the fetched data
+                ErrorLabel.Text = $"Item '{itemCode}' not found.";
+                ErrorLabel.IsVisible = true;
+            }
+            else if (results.Count == 1)
+            {
+                // Only one result - navigate directly
+                var product = results[0];
                 await Navigation.PushAsync(new LabelPreviewPage(
                     this,
                     product.ItemNumber,
@@ -85,8 +92,8 @@ public partial class MainPage : ContentPage
             }
             else
             {
-                ErrorLabel.Text = $"Item '{itemCode}' not found.";
-                ErrorLabel.IsVisible = true;
+                // Multiple results - show selection modal
+                await ShowItemSelectionModal(results, itemCode);
             }
         }
         catch (TaskCanceledException)
@@ -106,7 +113,40 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async Task<ItemData?> GetItemFromApi(string itemCode)
+    private async Task ShowItemSelectionModal(ObservableCollection<ItemData> items, string originalItemCode)
+    {
+        var modal = new ItemSelectionModal(items);
+        await Navigation.PushModalAsync(modal);
+
+        var selectedItem = await modal.SelectedItemTask;
+
+        if (selectedItem != null)
+        {
+            // Navigate to preview with the selected item
+            await Navigation.PushAsync(new LabelPreviewPage(
+                this,
+                selectedItem.ItemNumber,
+                selectedItem.ItemCodeDesc,
+                originalItemCode,
+                selectedItem.Facility,
+                selectedItem.Warehouse,
+                selectedItem.Aisle,
+                selectedItem.Column,
+                selectedItem.Level,
+                selectedItem.Spot,
+                selectedItem.Comment,
+                selectedItem.Ver1,
+                selectedItem.Ver2,
+                selectedItem.Ver3,
+                selectedItem.Ver4,
+                selectedItem.Ver5,
+                selectedItem.Ver6,
+                selectedItem.Ver7
+            ));
+        }
+    }
+
+    private async Task<ObservableCollection<ItemData>?> GetItemsFromApi(string itemCode)
     {
         try
         {
@@ -122,33 +162,38 @@ public partial class MainPage : ContentPage
             }
 
             var responseJson = await response.Content.ReadAsStringAsync();
-            var result = System.Text.Json.JsonSerializer.Deserialize<ItemApiResponse>(responseJson);
+            var result = System.Text.Json.JsonSerializer.Deserialize<ItemsApiResponse>(responseJson);
 
-            if (result != null && result.success)
+            if (result != null && result.success && result.items != null && result.items.Count > 0)
             {
-                return new ItemData
+                var items = new ObservableCollection<ItemData>();
+                foreach (var item in result.items)
                 {
-                    ItemNumber = result.itemNumber,
-                    ItemCodeDesc = result.itemCodeDesc,
-                    Facility = result.facility,
-                    Warehouse = result.warehouse,
-                    Aisle = result.aisle,
-                    Column = result.column,
-                    Level = result.level,
-                    Arrow = result.arrow,
-                    Spot = result.spot,
-                    Comment = result.comment,
-                    Ver1 = result.ver1,
-                    Ver2 = result.ver2,
-                    Ver3 = result.ver3,
-                    Ver4 = result.ver4,
-                    Ver5 = result.ver5,
-                    Ver6 = result.ver6,
-                    Ver7 = result.ver7
-                };
+                    items.Add(new ItemData
+                    {
+                        ItemNumber = item.itemNumber,
+                        ItemCodeDesc = item.itemCodeDesc,
+                        Facility = item.facility,
+                        Warehouse = item.warehouse,
+                        Aisle = item.aisle,
+                        Column = item.column,
+                        Level = item.level,
+                        Arrow = item.arrow,
+                        Spot = item.spot,
+                        Comment = item.comment,
+                        Ver1 = item.ver1,
+                        Ver2 = item.ver2,
+                        Ver3 = item.ver3,
+                        Ver4 = item.ver4,
+                        Ver5 = item.ver5,
+                        Ver6 = item.ver6,
+                        Ver7 = item.ver7
+                    });
+                }
+                return items;
             }
 
-            return null;
+            return new ObservableCollection<ItemData>();
         }
         catch (Exception)
         {
@@ -157,9 +202,16 @@ public partial class MainPage : ContentPage
     }
 }
 
-public class ItemApiResponse
+public class ItemsApiResponse
 {
     public bool success { get; set; }
+    public int count { get; set; }
+    public List<ItemApiResponse> items { get; set; } = new();
+    public string message { get; set; } = "";
+}
+
+public class ItemApiResponse
+{
     public string itemNumber { get; set; } = "";
     public string itemCodeDesc { get; set; } = "";
     public string facility { get; set; } = "";

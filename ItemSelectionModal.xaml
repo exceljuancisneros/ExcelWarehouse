@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PrintLabels.ItemSelectionModal"
+             BackgroundColor="#0d1117">
+
+    <Grid>
+        <!-- Header -->
+        <Border HeightRequest="60" Stroke="#30363d" StrokeShape="RoundRectangle 0"
+                Background="#161b22" Padding="16" Grid.Row="0">
+            <VerticalStackLayout VerticalOptions="Center">
+                <Label Text="Select an item"
+                       FontSize="18" FontAttributes="Bold" TextColor="#f0f6fc"/>
+                <Label x:Name="CountLabel"
+                       FontSize="12" TextColor="#8b949e" Margin="0,2,0,0"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Item List -->
+        <ListView x:Name="ItemList"
+                  BackgroundColor="#0d1117"
+                  SeparatorVisibility="Default"
+                  SeparatorColor="#30363d"
+                  HasUnevenRows="True"
+                  ItemTapped="OnItemTapped"
+                  Margin="0,60,0,0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="16,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding ItemNumber}"
+                                       FontSize="16" TextColor="#f0f6fc" FontAttributes="Bold"/>
+                                <Label Text="{Binding ItemCodeDesc}"
+                                       FontSize="13" TextColor="#8b949e" Margin="0,2,0,0"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="&#xf054;" FontFamily="FontAwesome" FontSize="14"
+                                   TextColor="#58a6ff" VerticalOptions="Center"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Cancel Button -->
+        <Border Stroke="#30363d" StrokeShape="RoundRectangle 8"
+                Background="#161b22" Padding="20" HorizontalOptions="Fill"
+                VerticalOptions="End" Margin="16,0,16,16">
+            <Button Text="Cancel"
+                    FontSize="16" TextColor="#f0f6fc"
+                    BackgroundColor="Transparent"
+                    BorderColor="#30363d"
+                    BorderWidth="1"
+                    Clicked="OnCancelClicked"/>
+        </Border>
+    </Grid>
+
+</ContentPage>
