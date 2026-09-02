@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
 
 namespace PrintLabels;
 
@@ -68,7 +67,20 @@ public static class VersionHelper
     
     public static string GetCurrentVersion()
     {
-        return "0.5"; // Update this manually when releasing new versions
+#if ANDROID
+        try
+        {
+            var packageInfo = Android.App.Application.Context.PackageManager.GetPackageInfo(
+                Android.App.Application.Context.PackageName, 0);
+            return packageInfo.VersionName ?? "1.0.0";
+        }
+        catch
+        {
+            return "1.0.0";
+        }
+#else
+        return "1.0.0";
+#endif
     }
     
     public static bool IsNewerVersion(string latestVersion)
