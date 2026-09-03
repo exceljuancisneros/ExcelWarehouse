@@ -28,10 +28,35 @@ public partial class LoginPage : ContentPage
 #endif
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         UsernameEntry.Focus();
+        
+        // Check for updates after the UI is ready
+        _ = CheckForUpdatesAsync();
+    }
+    
+    private async Task CheckForUpdatesAsync()
+    {
+        try
+        {
+            await Task.Delay(1000); // Wait a second for the page to fully appear
+            var latestVersion = await VersionHelper.GetLatestVersionAsync();
+            
+            if (VersionHelper.IsNewerVersion(latestVersion))
+            {
+                var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
+                
+                // Show update dialog
+                var updateDialog = new UpdateDialog(latestVersion, downloadUrl ?? "");
+                await Navigation.PushModalAsync(updateDialog);
+            }
+        }
+        catch
+        {
+            // Don't let update check errors crash the app
+        }
     }
 
     private void OnUsernameCompleted(object sender, EventArgs e)

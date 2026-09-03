@@ -13,9 +13,6 @@ public partial class App : Application
         
         // Request permissions on first launch
         await RequestAllPermissionsAsync();
-        
-        // Check for updates (non-blocking)
-        _ = CheckForUpdatesAsync();
     }
 
     private async Task RequestAllPermissionsAsync()
