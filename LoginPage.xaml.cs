@@ -56,11 +56,14 @@ public partial class LoginPage : ContentPage
                 {
                     try
                     {
-                        await Browser.Default.OpenAsync(downloadUrl, BrowserLaunchMode.External);
+                        // Extract the GitHub release page URL
+                        var releasePage = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/tag/v1.0.3";
+                        var result = await Browser.Default.OpenAsync(releasePage);
+                        DebugLabel.Text = $"Browser opened: {result}";
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        DebugLabel.Text = "Failed to open browser";
+                        DebugLabel.Text = $"Browser error: {ex.Message}";
                     }
                 }
             }
