@@ -96,7 +96,9 @@ public static class VersionHelper
     
     public class GitHubRelease
     {
+        [System.Text.Json.Serialization.JsonPropertyName("tag_name")]
         public string TagName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("assets")]
         public List<Asset> Assets { get; set; }
     }
     
