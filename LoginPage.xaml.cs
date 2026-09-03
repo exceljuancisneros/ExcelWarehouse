@@ -33,30 +33,37 @@ public partial class LoginPage : ContentPage
         base.OnAppearing();
         UsernameEntry.Focus();
         
-        // Check for updates after the UI is ready
-        _ = CheckForUpdatesAsync();
-    }
-    
-    private async Task CheckForUpdatesAsync()
-    {
-        try
+        // Check for updates
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await Task.Delay(1000); // Wait a second for the page to fully appear
-            var latestVersion = await VersionHelper.GetLatestVersionAsync();
+            await Task.Delay(3000);
             
-            if (VersionHelper.IsNewerVersion(latestVersion))
+            try
             {
-                var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
+                var latestVersion = await VersionHelper.GetLatestVersionAsync();
+                var currentVersion = VersionHelper.GetCurrentVersion();
                 
-                // Show update dialog
-                var updateDialog = new UpdateDialog(latestVersion, downloadUrl ?? "");
-                await Navigation.PushModalAsync(updateDialog);
+                if (VersionHelper.IsNewerVersion(latestVersion))
+                {
+                    var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
+                    
+                    bool update = await DisplayAlert(
+                        "Update Available",
+                        $"A new version ({latestVersion}) is available.\n\nCurrent: {currentVersion}\nLatest: {latestVersion}",
+                        "Download",
+                        "Later");
+                    
+                    if (update && !string.IsNullOrEmpty(downloadUrl))
+                    {
+                        await Browser.Default.OpenAsync(downloadUrl);
+                    }
+                }
             }
-        }
-        catch
-        {
-            // Don't let update check errors crash the app
-        }
+            catch
+            {
+                // Don't let update check errors crash the app
+            }
+        });
     }
 
     private void OnUsernameCompleted(object sender, EventArgs e)
