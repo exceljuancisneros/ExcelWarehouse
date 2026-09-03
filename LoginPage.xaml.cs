@@ -51,15 +51,17 @@ public partial class LoginPage : ContentPage
                 DebugLabel.Text = $"URL: {downloadUrl?.Substring(0, Math.Min(30, downloadUrl.Length))}...";
                 
                 await Task.Delay(1000);
-                bool update = await DisplayAlert(
-                    "Update Available",
-                    $"A new version ({latestVersion}) is available.\n\nCurrent: {VersionHelper.GetCurrentVersion()}\nLatest: {latestVersion}",
-                    "Download",
-                    "Later");
                 
-                if (update && !string.IsNullOrEmpty(downloadUrl))
+                if (!string.IsNullOrEmpty(downloadUrl))
                 {
-                    await Browser.Default.OpenAsync(downloadUrl);
+                    try
+                    {
+                        await Browser.Default.OpenAsync(downloadUrl, BrowserLaunchMode.External);
+                    }
+                    catch
+                    {
+                        DebugLabel.Text = "Failed to open browser";
+                    }
                 }
             }
             else
