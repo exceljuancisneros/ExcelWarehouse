@@ -48,18 +48,21 @@ public partial class LoginPage : ContentPage
             if (isNewer)
             {
                 var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
-                DebugLabel.Text = $"URL: {downloadUrl?.Substring(0, Math.Min(30, downloadUrl.Length))}...";
                 
                 await Task.Delay(1000);
                 
-                if (!string.IsNullOrEmpty(downloadUrl))
+                bool update = await DisplayAlert(
+                    "Update Available",
+                    $"A new version ({latestVersion}) is available.\n\nCurrent: {VersionHelper.GetCurrentVersion()}\nLatest: {latestVersion}",
+                    "Download",
+                    "Later");
+                
+                if (update && !string.IsNullOrEmpty(downloadUrl))
                 {
                     try
                     {
-                        // Extract the GitHub release page URL
-                        var releasePage = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/tag/v1.0.3";
-                        var result = await Browser.Default.OpenAsync(releasePage);
-                        DebugLabel.Text = $"Browser opened: {result}";
+                        await Browser.Default.OpenAsync(downloadUrl);
+                        DebugLabel.Text = "Browser opened";
                     }
                     catch (Exception ex)
                     {
