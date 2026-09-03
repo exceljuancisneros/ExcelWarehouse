@@ -34,36 +34,43 @@ public partial class LoginPage : ContentPage
         UsernameEntry.Focus();
         
         // Check for updates
-        MainThread.BeginInvokeOnMainThread(async () =>
+        DebugLabel.Text = "Checking...";
+        DebugLabel.IsVisible = true;
+        
+        try
         {
-            await Task.Delay(3000);
+            var latestVersion = await VersionHelper.GetLatestVersionAsync();
+            DebugLabel.Text = $"Latest: {latestVersion} | Current: {VersionHelper.GetCurrentVersion()}";
             
-            try
+            var isNewer = VersionHelper.IsNewerVersion(latestVersion);
+            DebugLabel.Text = $"IsNewer: {isNewer} | Latest: {latestVersion}";
+            
+            if (isNewer)
             {
-                var latestVersion = await VersionHelper.GetLatestVersionAsync();
-                var currentVersion = VersionHelper.GetCurrentVersion();
+                var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
+                DebugLabel.Text = $"URL: {downloadUrl?.Substring(0, Math.Min(30, downloadUrl.Length))}...";
                 
-                if (VersionHelper.IsNewerVersion(latestVersion))
+                await Task.Delay(1000);
+                bool update = await DisplayAlert(
+                    "Update Available",
+                    $"A new version ({latestVersion}) is available.\n\nCurrent: {VersionHelper.GetCurrentVersion()}\nLatest: {latestVersion}",
+                    "Download",
+                    "Later");
+                
+                if (update && !string.IsNullOrEmpty(downloadUrl))
                 {
-                    var downloadUrl = await VersionHelper.GetLatestDownloadUrlAsync();
-                    
-                    bool update = await DisplayAlert(
-                        "Update Available",
-                        $"A new version ({latestVersion}) is available.\n\nCurrent: {currentVersion}\nLatest: {latestVersion}",
-                        "Download",
-                        "Later");
-                    
-                    if (update && !string.IsNullOrEmpty(downloadUrl))
-                    {
-                        await Browser.Default.OpenAsync(downloadUrl);
-                    }
+                    await Browser.Default.OpenAsync(downloadUrl);
                 }
             }
-            catch
+            else
             {
-                // Don't let update check errors crash the app
+                DebugLabel.Text = "No update needed";
             }
-        });
+        }
+        catch (Exception ex)
+        {
+            DebugLabel.Text = $"ERROR: {ex.Message}";
+        }
     }
 
     private void OnUsernameCompleted(object sender, EventArgs e)
