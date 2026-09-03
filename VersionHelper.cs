@@ -9,6 +9,7 @@ namespace PrintLabels;
 public static class VersionHelper
 {
     private const string GitHubApiUrl = "https://api.github.com/repos/exceljuancisneros/ExcelWarehouse/releases/latest";
+    private const string GitHubToken = "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";
     
     public static async Task<string> GetLatestVersionAsync()
     {
@@ -16,6 +17,7 @@ public static class VersionHelper
         {
             using var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(10);
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"token {GitHubToken}");
             
             var response = await httpClient.GetAsync(GitHubApiUrl);
             if (response.IsSuccessStatusCode)
@@ -39,6 +41,7 @@ public static class VersionHelper
         {
             using var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(10);
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"token {GitHubToken}");
             
             var response = await httpClient.GetAsync(GitHubApiUrl);
             if (response.IsSuccessStatusCode)
