@@ -61,12 +61,17 @@ public partial class LoginPage : ContentPage
                 {
                     try
                     {
+#if ANDROID
+                        // Download APK and install it
+                        await UpdateService.DownloadAndInstallAsync(downloadUrl);
+#else
                         await Browser.Default.OpenAsync(downloadUrl);
-                        DebugLabel.Text = "Browser opened";
+#endif
+                        DebugLabel.Text = "Download started";
                     }
                     catch (Exception ex)
                     {
-                        DebugLabel.Text = $"Browser error: {ex.Message}";
+                        DebugLabel.Text = $"Error: {ex.Message}";
                     }
                 }
             }
