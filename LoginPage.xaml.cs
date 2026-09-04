@@ -34,16 +34,10 @@ public partial class LoginPage : ContentPage
         UsernameEntry.Focus();
         
         // Check for updates
-        DebugLabel.Text = "Checking...";
-        DebugLabel.IsVisible = true;
-        
         try
         {
             var latestVersion = await VersionHelper.GetLatestVersionAsync();
-            DebugLabel.Text = $"Latest: {latestVersion} | Current: {VersionHelper.GetCurrentVersion()}";
-            
             var isNewer = VersionHelper.IsNewerVersion(latestVersion);
-            DebugLabel.Text = $"IsNewer: {isNewer} | Latest: {latestVersion}";
             
             if (isNewer)
             {
@@ -56,9 +50,6 @@ public partial class LoginPage : ContentPage
                     $"A new version ({latestVersion}) is available.\n\nCurrent: {VersionHelper.GetCurrentVersion()}\nLatest: {latestVersion}",
                     "Download",
                     "Later");
-                
-                DebugLabel.Text = $"Update={update} DownloadUrl={downloadUrl ?? "NULL"}";
-                DebugLabel.IsVisible = true;
                 
                 if (update && !string.IsNullOrEmpty(downloadUrl))
                 {
@@ -78,23 +69,11 @@ public partial class LoginPage : ContentPage
                     await Browser.Default.OpenAsync(downloadUrl, BrowserLaunchMode.External);
 #endif
                 }
-                else if (!update)
-                {
-                    DebugLabel.Text = "Update was false - no newer version";
-                }
-                else
-                {
-                    DebugLabel.Text = $"DownloadUrl was null or empty!";
-                }
-            }
-            else
-            {
-                DebugLabel.Text = "No update needed";
             }
         }
-        catch (Exception ex)
+        catch
         {
-            DebugLabel.Text = $"ERROR: {ex.Message}";
+            // Silently fail - don't block login
         }
     }
 
