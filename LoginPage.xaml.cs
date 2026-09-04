@@ -59,25 +59,36 @@ public partial class LoginPage : ContentPage
                 
                 if (update && !string.IsNullOrEmpty(downloadUrl))
                 {
+                    DebugLabel.Text = "Button clicked! Opening browser...";
+                    DebugLabel.IsVisible = true;
+                    
+                    // Open the GitHub release page in browser
+                    var releaseUrl = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/latest";
+#if ANDROID
+                    DebugLabel.Text = "Starting Android Intent...";
                     try
                     {
-                        // Get the release page URL from the download URL
-                        var releaseUrl = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/latest";
-#if ANDROID
-                        // Open release page in Chrome - user can download APK manually
-                        var intent = new Android.Content.Intent(Android.Content.Intent.ActionView, 
-                            Android.Net.Uri.Parse(releaseUrl));
-                        intent.SetFlags(Android.Content.ActivityFlags.NewTask);
-                        Android.App.Application.Context.StartActivity(intent);
-#else
-                        await Browser.Default.OpenAsync(releaseUrl, BrowserLaunchMode.External);
-#endif
-                        DebugLabel.Text = "Opening release page...";
+                        var uri = Android.Net.Uri.Parse(releaseUrl);
+                        var intent = new Android.Content.Intent(Android.Content.Intent.ActionView, uri);
+                        intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+                        if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity != null)
+                        {
+                            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.StartActivity(intent);
+                            DebugLabel.Text = "Intent started!";
+                        }
+                        else
+                        {
+                            DebugLabel.Text = "CurrentActivity is NULL";
+                        }
                     }
                     catch (Exception ex)
                     {
-                        DebugLabel.Text = $"Error: {ex.Message}";
+                        DebugLabel.Text = $"Intent error: {ex.Message}";
                     }
+#else
+                    await Browser.Default.OpenAsync(releaseUrl, BrowserLaunchMode.External);
+                    DebugLabel.Text = "Opening release page...";
+#endif
                 }
             }
             else
