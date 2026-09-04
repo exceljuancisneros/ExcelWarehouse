@@ -61,13 +61,18 @@ public partial class LoginPage : ContentPage
                 {
                     try
                     {
+                        // Get the release page URL from the download URL
+                        var releaseUrl = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/latest";
 #if ANDROID
-                        // Download APK and install it
-                        await UpdateService.DownloadAndInstallAsync(downloadUrl, this);
+                        // Open release page in Chrome - user can download APK manually
+                        var intent = new Android.Content.Intent(Android.Content.Intent.ActionView, 
+                            Android.Net.Uri.Parse(releaseUrl));
+                        intent.SetFlags(Android.Content.ActivityFlags.NewTask);
+                        Android.App.Application.Context.StartActivity(intent);
 #else
-                        await Browser.Default.OpenAsync(downloadUrl);
+                        await Browser.Default.OpenAsync(releaseUrl, BrowserLaunchMode.External);
 #endif
-                        DebugLabel.Text = "Download started";
+                        DebugLabel.Text = "Opening release page...";
                     }
                     catch (Exception ex)
                     {
