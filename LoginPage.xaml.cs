@@ -62,10 +62,8 @@ public partial class LoginPage : ContentPage
                 
                 if (update && !string.IsNullOrEmpty(downloadUrl))
                 {
-                    // Open the GitHub release page in browser
-                    var releaseUrl = "https://github.com/exceljuancisneros/ExcelWarehouse/releases/latest";
 #if ANDROID
-                    var uri = Android.Net.Uri.Parse(releaseUrl);
+                    var uri = Android.Net.Uri.Parse(downloadUrl);
                     var intent = new Android.Content.Intent(Android.Content.Intent.ActionView, uri);
                     intent.AddFlags(Android.Content.ActivityFlags.NewTask);
                     if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity != null)
@@ -74,11 +72,10 @@ public partial class LoginPage : ContentPage
                     }
                     else
                     {
-                        // Fallback: use Browser if CurrentActivity is null
-                        await Browser.Default.OpenAsync(releaseUrl, BrowserLaunchMode.External);
+                        await Browser.Default.OpenAsync(downloadUrl, BrowserLaunchMode.External);
                     }
 #else
-                    await Browser.Default.OpenAsync(releaseUrl, BrowserLaunchMode.External);
+                    await Browser.Default.OpenAsync(downloadUrl, BrowserLaunchMode.External);
 #endif
                 }
                 else if (!update)
