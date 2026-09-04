@@ -63,7 +63,7 @@ public partial class LoginPage : ContentPage
                     {
 #if ANDROID
                         // Download APK and install it
-                        await UpdateService.DownloadAndInstallAsync(downloadUrl);
+                        await UpdateService.DownloadAndInstallAsync(downloadUrl, this);
 #else
                         await Browser.Default.OpenAsync(downloadUrl);
 #endif
