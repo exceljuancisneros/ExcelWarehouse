@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
   <!-- Purple background matching app branding -->
-  <rect width="456" height="456" fill="#512BD4"/>
-  <!-- Shopping bag icon (simplified shopping cart) -->
-  <g transform="translate(140, 100) scale(2)" fill="white">
+  <rect x="0" y="0" width="456" height="456" fill="#512BD4"/>
+  <!-- Shopping Bag Icon (FontAwesome f494) - properly scaled -->
+  <g transform="translate(140, 110) scale(2.2)" fill="#ffffff">
     <!-- Left handle -->
-    <rect x="0" y="0" width="4" height="25" rx="2"/>
-    <!-- Right handle -->
-    <rect x="28" y="0" width="4" height="25" rx="2"/>
-    <!-- Main bag -->
-    <path d="M-4 25 h40 v35 c0 2 -2 4 -4 4 h-32 c-2 0 -4 -2 -4 -4 v-35 z"/>
-    <!-- Bottom line -->
-    <rect x="-4" y="60" width="40" height="3"/>
+    <path d="M178 158c-4 0-8 4-8 8v16c0 4 4 8 8 8s8-4 8-8v-16c0-4-4-8-8-8zm100 0c-4 0-8 4-8 8v16c0 4 4 8 8 8s8-4 8-8v-16c0-4-4-8-8-8z"/>
+    <!-- Bag body -->
+    <path d="M170 190v48c0 24-16 40-40 40s-40-16-40-40v-48h120zm116 0v48c0 24-16 40-40 40s-40-16-40-40v-48h120z"/>
   </g>
-  <!-- "Excel Warehouse" text -->
-  <text x="228" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white">Excel Warehouse</text>
+  <!-- Excel Warehouse text -->
+  <text x="228" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#ffffff">Excel Warehouse</text>
 </svg>
