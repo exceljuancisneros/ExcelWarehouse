@@ -41,26 +41,33 @@ public static class VersionHelper
             httpClient.Timeout = TimeSpan.FromSeconds(10);
             
             var response = await httpClient.GetAsync(GitHubApiUrl);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+                return null;
+                
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var release = JsonSerializer.Deserialize<GitHubRelease>(json, options);
+            
+            if (release?.Assets == null || release.Assets.Count == 0)
+                return null;
+                
+            foreach (var asset in release.Assets)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var release = JsonSerializer.Deserialize<GitHubRelease>(json, options);
-                if (release?.Assets != null)
+                // Debug: log asset names
+                Console.WriteLine($"[VersionCheck] Asset: {asset.Name}");
+                
+                if (asset.Name.EndsWith(".apk"))
                 {
-                    foreach (var asset in release.Assets)
-                    {
-                        if (asset.Name.EndsWith(".apk"))
-                        {
-                            return asset.BrowserDownloadUrl;
-                        }
-                    }
+                    Console.WriteLine($"[VersionCheck] Found APK: {asset.BrowserDownloadUrl}");
+                    return asset.BrowserDownloadUrl;
                 }
             }
+            
+            Console.WriteLine("[VersionCheck] No .apk asset found");
         }
-        catch
+        catch (Exception ex)
         {
-            // If we can't check, return null to avoid blocking
+            Console.WriteLine($"[VersionCheck] Error: {ex.Message}");
         }
         return null;
     }
@@ -104,7 +111,9 @@ public static class VersionHelper
     
     public class Asset
     {
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("browser_download_url")]
         public string BrowserDownloadUrl { get; set; }
     }
 }
