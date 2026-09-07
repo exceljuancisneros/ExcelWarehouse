@@ -4,64 +4,34 @@ namespace PrintLabels;
 
 public static class UserRepository
 {
-    private const string ApiUrl = "http://192.168.211.17:8080/api/ExcelIDP/VerifyUserCredentials";
+    private const string VerifyUrl = "http://192.168.211.17:8080/api/ExcelIDP/VerifyUserCredentials";
+    private const string PermissionsUrl = "http://192.168.211.17:8080/api/ExcelIDP/GetUserPermissions";
 
     public static async Task<(bool Authenticated, string ErrorMessage, UserPermissions? Permissions)> AuthenticateAsync(string username, string password)
     {
         try
         {
-            using var httpClient = new HttpClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(10);
-
-            var requestBody = new { UserName = username.Trim(), Password = password.Trim() };
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PostAsync(ApiUrl, content);
-
-            // Debug: log raw response
-            var responseText = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[LOGIN] Response from {ApiUrl}: {responseText}");
-            Console.WriteLine($"[LOGIN] Status code: {response.StatusCode}");
-
-            if (!response.IsSuccessStatusCode)
+            // Step 1: Verify credentials
+            var verifyResult = await VerifyCredentialsAsync(username, password);
+            
+            if (!verifyResult.success)
             {
-                Console.WriteLine($"[LOGIN] Failed - HTTP {response.StatusCode}");
-                return (false, "API connection failed. Please check your network connection.", null);
+                return (false, verifyResult.message ?? "Invalid username or password.", null);
             }
 
-            var result = JsonSerializer.Deserialize<AuthResponse>(responseText);
-
-            Console.WriteLine($"[LOGIN] Deserialized - success: {result?.success}, count: {result?.count}");
-            Console.WriteLine($"[LOGIN] Permissions count: {result?.permissions?.Count ?? 0}");
-
-            if (result?.permissions != null)
+            if (string.IsNullOrEmpty(verifyResult.userId))
             {
-                foreach (var perm in result.permissions)
-                {
-                    Console.WriteLine($"[LOGIN] Permission: {perm.permissionName} = {perm.value}");
-                }
+                return (false, "Invalid response from server.", null);
             }
 
-            if (result == null || !result.success)
-            {
-                Console.WriteLine("[LOGIN] Failed - success=false or null");
-                return (false, "Invalid username or password.", null);
-            }
-
-            // Parse permissions
-            var permissions = ParsePermissions(result.permissions);
-
-            Console.WriteLine($"[LOGIN] Parsed - CanAccess: {permissions.CanAccess}, CanPrint: {permissions.CanPrint}");
+            // Step 2: Get user permissions using userId
+            var permissions = await GetUserPermissionsAsync(verifyResult.userId);
 
             // Check if user has app access
-            if (!permissions.CanAccess)
+            if (permissions == null || !permissions.CanAccess)
             {
-                Console.WriteLine("[LOGIN] BLOCKED - No app access permission");
                 return (false, "You do not have permission to access this application.", null);
             }
-
-            Console.WriteLine("[LOGIN] SUCCESS");
 
             // Store auth data
             Preferences.Set("logged_in_user", username.Trim());
@@ -73,44 +43,71 @@ public static class UserRepository
         {
             return (false, "API connection timed out. Please check your network connection.", null);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"[LOGIN] EXCEPTION: {ex.Message}");
             return (false, "Could not connect to the server. Please check your network connection.", null);
         }
     }
 
-    private static UserPermissions ParsePermissions(List<Permission>? permissions)
+    private static async Task<VerifyResult> VerifyCredentialsAsync(string username, string password)
     {
-        var result = new UserPermissions();
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(10);
 
-        if (permissions == null || permissions.Count == 0)
+        var requestBody = new { UserName = username.Trim(), Password = password.Trim() };
+        var json = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync(VerifyUrl, content);
+
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<VerifyResponse>(responseJson);
+
+        return new VerifyResult
         {
-            Console.WriteLine("[PARSE] No permissions found - using defaults");
-            return result;
+            success = result?.success == true,
+            message = result?.message,
+            userId = result != null ? result.userId.ToString() : null
+        };
+    }
+
+    private static async Task<UserPermissions?> GetUserPermissionsAsync(string userId)
+    {
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(10);
+
+        var requestBody = new { userId = userId };
+        var json = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync(PermissionsUrl, content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
         }
 
-        foreach (var perm in permissions)
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<PermissionsResponse>(responseJson);
+
+        if (result?.permissions == null || result.permissions.Count == 0)
+            return null;
+
+        var permissions = new UserPermissions();
+        foreach (var perm in result.permissions)
         {
-            Console.WriteLine($"[PARSE] Checking: {perm.permissionName} = '{perm.value}'");
-            
             switch (perm.permissionName)
             {
                 case "ExcelWarehouse_UPAppAccess":
-                    result.CanAccess = perm.value == "True";
-                    Console.WriteLine($"[PARSE] Set CanAccess = {result.CanAccess}");
+                    permissions.CanAccess = perm.value == "True";
                     break;
                 case "ExcelWarehouse_UPPrintLabels":
-                    result.CanPrint = perm.value == "True";
-                    Console.WriteLine($"[PARSE] Set CanPrint = {result.CanPrint}");
-                    break;
-                default:
-                    Console.WriteLine($"[PARSE] Unknown permission: {perm.permissionName}");
+                    permissions.CanPrint = perm.value == "True";
                     break;
             }
         }
 
-        return result;
+        return permissions;
     }
 
     public static string GetUsername()
@@ -145,11 +142,28 @@ public static class UserRepository
         public bool CanPrint { get; set; }
     }
 
-    private class AuthResponse
+    private class VerifyResult
+    {
+        public bool success { get; set; }
+        public string? message { get; set; }
+        public string? userId { get; set; }
+    }
+
+    private class VerifyResponse
+    {
+        public bool success { get; set; }
+        public int userId { get; set; }
+        public string userName { get; set; } = string.Empty;
+        public string token { get; set; } = string.Empty;
+        public string message { get; set; } = string.Empty;
+    }
+
+    private class PermissionsResponse
     {
         public bool success { get; set; }
         public int count { get; set; }
         public List<Permission>? permissions { get; set; }
+        public string message { get; set; } = string.Empty;
     }
 
     private class Permission
