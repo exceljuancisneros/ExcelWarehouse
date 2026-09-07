@@ -19,13 +19,13 @@ public static class UserRepository
                 return (false, verifyResult.message ?? "Invalid username or password.", null);
             }
 
-            if (string.IsNullOrEmpty(verifyResult.userId))
+            if (string.IsNullOrEmpty(verifyResult.userName))
             {
                 return (false, "Invalid response from server.", null);
             }
 
-            // Step 2: Get user permissions using userId
-            var permissions = await GetUserPermissionsAsync(verifyResult.userId);
+            // Step 2: Get user permissions using username
+            var permissions = await GetUserPermissionsAsync(verifyResult.userName);
 
             // Check if user has app access
             if (permissions == null || !permissions.CanAccess)
@@ -67,16 +67,16 @@ public static class UserRepository
         {
             success = result?.success == true,
             message = result?.message,
-            userId = result != null ? result.userId.ToString() : null
+            userName = result?.userName
         };
     }
 
-    private static async Task<UserPermissions?> GetUserPermissionsAsync(string userId)
+    private static async Task<UserPermissions?> GetUserPermissionsAsync(string userName)
     {
         using var httpClient = new HttpClient();
         httpClient.Timeout = TimeSpan.FromSeconds(10);
 
-        var requestBody = new { userId = userId };
+        var requestBody = new { userId = userName };
         var json = JsonSerializer.Serialize(requestBody);
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
@@ -146,7 +146,7 @@ public static class UserRepository
     {
         public bool success { get; set; }
         public string? message { get; set; }
-        public string? userId { get; set; }
+        public string? userName { get; set; }
     }
 
     private class VerifyResponse
