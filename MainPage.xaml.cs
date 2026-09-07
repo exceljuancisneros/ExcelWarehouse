@@ -6,14 +6,16 @@ namespace PrintLabels;
 public partial class MainPage : ContentPage
 {
     private readonly string _username;
+    private readonly UserRepository.UserPermissions? _permissions;
     private readonly HttpClient _httpClient;
     
     // API Server connection
     private const string ApiUrl = "http://192.168.211.17:8080/api";
 
-    public MainPage(string username)
+    public MainPage(string username, UserRepository.UserPermissions? permissions)
     {
         _username = username;
+        _permissions = permissions;
         _httpClient = new HttpClient();
         _httpClient.Timeout = TimeSpan.FromSeconds(10);
         InitializeComponent();
@@ -32,6 +34,7 @@ public partial class MainPage : ContentPage
 
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
+        UserRepository.ClearToken();
         await Navigation.PopToRootAsync();
     }
 

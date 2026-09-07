@@ -115,10 +115,10 @@ public partial class LoginPage : ContentPage
 
         await Task.Delay(300);
 
-        var (isAuthenticated, errorMessage) = await UserRepository.AuthenticateAsync(username, password);
+        var (isAuthenticated, errorMessage, permissions) = await UserRepository.AuthenticateAsync(username, password);
         if (isAuthenticated)
         {
-            await Navigation.PushAsync(new MenuPage(username));
+            await Navigation.PushAsync(new MenuPage(username, permissions));
         }
         else
         {
