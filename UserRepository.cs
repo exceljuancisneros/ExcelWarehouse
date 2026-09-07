@@ -19,27 +19,49 @@ public static class UserRepository
 
             var response = await httpClient.PostAsync(ApiUrl, content);
 
+            // Debug: log raw response
+            var responseText = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[LOGIN] Response from {ApiUrl}: {responseText}");
+            Console.WriteLine($"[LOGIN] Status code: {response.StatusCode}");
+
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine($"[LOGIN] Failed - HTTP {response.StatusCode}");
                 return (false, "API connection failed. Please check your network connection.", null);
             }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<AuthResponse>(responseJson);
+            var result = JsonSerializer.Deserialize<AuthResponse>(responseText);
+
+            Console.WriteLine($"[LOGIN] Deserialized - success: {result?.success}, count: {result?.count}");
+            Console.WriteLine($"[LOGIN] Permissions count: {result?.permissions?.Count ?? 0}");
+
+            if (result?.permissions != null)
+            {
+                foreach (var perm in result.permissions)
+                {
+                    Console.WriteLine($"[LOGIN] Permission: {perm.permissionName} = {perm.value}");
+                }
+            }
 
             if (result == null || !result.success)
             {
+                Console.WriteLine("[LOGIN] Failed - success=false or null");
                 return (false, "Invalid username or password.", null);
             }
 
             // Parse permissions
             var permissions = ParsePermissions(result.permissions);
 
+            Console.WriteLine($"[LOGIN] Parsed - CanAccess: {permissions.CanAccess}, CanPrint: {permissions.CanPrint}");
+
             // Check if user has app access
             if (!permissions.CanAccess)
             {
+                Console.WriteLine("[LOGIN] BLOCKED - No app access permission");
                 return (false, "You do not have permission to access this application.", null);
             }
+
+            Console.WriteLine("[LOGIN] SUCCESS");
 
             // Store auth data
             Preferences.Set("logged_in_user", username.Trim());
@@ -51,28 +73,39 @@ public static class UserRepository
         {
             return (false, "API connection timed out. Please check your network connection.", null);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"[LOGIN] EXCEPTION: {ex.Message}");
             return (false, "Could not connect to the server. Please check your network connection.", null);
         }
     }
 
     private static UserPermissions ParsePermissions(List<Permission>? permissions)
     {
-        if (permissions == null || permissions.Count == 0)
-            return new UserPermissions();
-
         var result = new UserPermissions();
+
+        if (permissions == null || permissions.Count == 0)
+        {
+            Console.WriteLine("[PARSE] No permissions found - using defaults");
+            return result;
+        }
 
         foreach (var perm in permissions)
         {
+            Console.WriteLine($"[PARSE] Checking: {perm.permissionName} = '{perm.value}'");
+            
             switch (perm.permissionName)
             {
                 case "ExcelWarehouse_UPAppAccess":
                     result.CanAccess = perm.value == "True";
+                    Console.WriteLine($"[PARSE] Set CanAccess = {result.CanAccess}");
                     break;
                 case "ExcelWarehouse_UPPrintLabels":
                     result.CanPrint = perm.value == "True";
+                    Console.WriteLine($"[PARSE] Set CanPrint = {result.CanPrint}");
+                    break;
+                default:
+                    Console.WriteLine($"[PARSE] Unknown permission: {perm.permissionName}");
                     break;
             }
         }
