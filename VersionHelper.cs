@@ -8,7 +8,7 @@ namespace PrintLabels;
 
 public static class VersionHelper
 {
-    private const string GitHubApiUrl = "https://api.github.com/repos/exceljuancisneros/ExcelWarehouse/releases/latest";
+    private const string GitHubApiUrl = "https://api.github.com/repos/ExcelGroceryDev/ExcelWarehouse/releases/latest";
     
     public static async Task<string> GetLatestVersionAsync()
     {
