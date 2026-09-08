@@ -157,7 +157,13 @@ public partial class MainPage : ContentPage
             var json = System.Text.Json.JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"{ApiUrl}/item/search", content);
+            var token = await UserRepository.GetAccessTokenAsync();
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            // Bug preexistente: la API renombró este endpoint hace rato (ItemController ->
+            // WItemLocationsController) y esta URL nunca se actualizó — apuntaba a una ruta que
+            // ya no existe.
+            var response = await _httpClient.PostAsync($"{ApiUrl}/WItemLocations/ExcelWarehouse_PrintLabel_SearchItems", content);
 
             if (!response.IsSuccessStatusCode)
             {

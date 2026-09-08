@@ -1,114 +1,88 @@
+using System.Text;
 using System.Text.Json;
 
 namespace PrintLabels;
 
 public static class UserRepository
 {
-    private const string VerifyUrl = "http://192.168.211.17:8080/api/ExcelIDP/VerifyUserCredentials";
-    private const string PermissionsUrl = "http://192.168.211.17:8080/api/ExcelIDP/GetUserPermissions";
+    private const string TokenUrl = "http://192.168.211.17:8082/connect/token";
+    private const string ClientId = "excel_warehouse_maui";
 
     public static async Task<(bool Authenticated, string ErrorMessage, UserPermissions? Permissions)> AuthenticateAsync(string username, string password)
     {
         try
         {
-            // Step 1: Verify credentials
-            var verifyResult = await VerifyCredentialsAsync(username, password);
-            
-            if (!verifyResult.success)
+            using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+
+            var form = new Dictionary<string, string>
             {
-                return (false, verifyResult.message ?? "Invalid username or password.", null);
+                ["grant_type"] = "password",
+                ["username"] = username.Trim(),
+                ["password"] = password.Trim(),
+                ["client_id"] = ClientId,
+                ["scope"] = "openid profile roles offline_access"
+            };
+
+            var response = await httpClient.PostAsync(TokenUrl, new FormUrlEncodedContent(form));
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = JsonSerializer.Deserialize<TokenErrorResponse>(body);
+                return (false, error?.error_description ?? "Usuario o contraseña incorrectos.", null);
             }
 
-            if (string.IsNullOrEmpty(verifyResult.userName))
-            {
-                return (false, "Invalid response from server.", null);
-            }
+            var token = JsonSerializer.Deserialize<TokenResponse>(body)
+                ?? throw new InvalidOperationException("Respuesta de token vacía.");
 
-            // Step 2: Get user permissions using username
-            var permissions = await GetUserPermissionsAsync(verifyResult.userName);
+            var permissions = ExtractPermissions(token.access_token);
+            if (!permissions.CanAccess)
+                return (false, "No tenés permiso para acceder a esta aplicación.", null);
 
-            // Check if user has app access
-            if (permissions == null || !permissions.CanAccess)
-            {
-                return (false, "You do not have permission to access this application.", null);
-            }
-
-            // Store auth data
+            await SecureStorage.SetAsync("access_token", token.access_token);
+            await SecureStorage.SetAsync("refresh_token", token.refresh_token ?? string.Empty);
             Preferences.Set("logged_in_user", username.Trim());
             Preferences.Set("user_permissions", JsonSerializer.Serialize(permissions));
 
-            return (true, null, permissions);
+            return (true, string.Empty, permissions);
         }
         catch (TaskCanceledException)
         {
-            return (false, "API connection timed out. Please check your network connection.", null);
+            return (false, "Se agotó el tiempo de conexión con el servidor. Verificá tu red.", null);
         }
         catch (Exception)
         {
-            return (false, "Could not connect to the server. Please check your network connection.", null);
+            return (false, "No se pudo conectar con el servidor. Verificá tu red.", null);
         }
     }
 
-    private static async Task<VerifyResult> VerifyCredentialsAsync(string username, string password)
+    // Los roles ya vienen en el access token (claim "role") — no hace falta una segunda llamada
+    // a GetUserPermissions como antes, ExcelIDPManager los resuelve al emitir el token.
+    private static UserPermissions ExtractPermissions(string accessToken)
     {
-        using var httpClient = new HttpClient();
-        httpClient.Timeout = TimeSpan.FromSeconds(10);
+        var segments = accessToken.Split('.');
+        var payload = segments[1].Replace('-', '+').Replace('_', '/');
+        payload += (payload.Length % 4) switch { 2 => "==", 3 => "=", _ => "" };
+        var json = Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+        using var doc = JsonDocument.Parse(json);
 
-        var requestBody = new { UserName = username.Trim(), Password = password.Trim() };
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-        var response = await httpClient.PostAsync(VerifyUrl, content);
-
-        var responseJson = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<VerifyResponse>(responseJson);
-
-        return new VerifyResult
+        var roles = new HashSet<string>();
+        if (doc.RootElement.TryGetProperty("role", out var roleElement))
         {
-            success = result?.success == true,
-            message = result?.message,
-            userName = result?.userName
+            if (roleElement.ValueKind == JsonValueKind.Array)
+                foreach (var r in roleElement.EnumerateArray()) roles.Add(r.GetString() ?? "");
+            else if (roleElement.ValueKind == JsonValueKind.String)
+                roles.Add(roleElement.GetString() ?? "");
+        }
+
+        return new UserPermissions
+        {
+            CanAccess = roles.Contains("AppAccess"),
+            CanPrint = roles.Contains("PrintLabels")
         };
     }
 
-    private static async Task<UserPermissions?> GetUserPermissionsAsync(string userName)
-    {
-        using var httpClient = new HttpClient();
-        httpClient.Timeout = TimeSpan.FromSeconds(10);
-
-        var requestBody = new { userId = userName };
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-        var response = await httpClient.PostAsync(PermissionsUrl, content);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        var responseJson = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<PermissionsResponse>(responseJson);
-
-        if (result?.permissions == null || result.permissions.Count == 0)
-            return null;
-
-        var permissions = new UserPermissions();
-        foreach (var perm in result.permissions)
-        {
-            switch (perm.permissionName)
-            {
-                case "ExcelWarehouse_UPAppAccess":
-                    permissions.CanAccess = perm.value == "True";
-                    break;
-                case "ExcelWarehouse_UPPrintLabels":
-                    permissions.CanPrint = perm.value == "True";
-                    break;
-            }
-        }
-
-        return permissions;
-    }
+    public static Task<string?> GetAccessTokenAsync() => SecureStorage.GetAsync("access_token");
 
     public static string GetUsername()
     {
@@ -129,6 +103,8 @@ public static class UserRepository
     {
         Preferences.Remove("logged_in_user");
         Preferences.Remove("user_permissions");
+        SecureStorage.Remove("access_token");
+        SecureStorage.Remove("refresh_token");
     }
 
     public static bool IsLoggedIn()
@@ -142,33 +118,17 @@ public static class UserRepository
         public bool CanPrint { get; set; }
     }
 
-    private class VerifyResult
+    private class TokenResponse
     {
-        public bool success { get; set; }
-        public string? message { get; set; }
-        public string? userName { get; set; }
+        public string access_token { get; set; } = string.Empty;
+        public string? refresh_token { get; set; }
+        public string token_type { get; set; } = string.Empty;
+        public int expires_in { get; set; }
     }
 
-    private class VerifyResponse
+    private class TokenErrorResponse
     {
-        public bool success { get; set; }
-        public int userId { get; set; }
-        public string userName { get; set; } = string.Empty;
-        public string token { get; set; } = string.Empty;
-        public string message { get; set; } = string.Empty;
-    }
-
-    private class PermissionsResponse
-    {
-        public bool success { get; set; }
-        public int count { get; set; }
-        public List<Permission>? permissions { get; set; }
-        public string message { get; set; } = string.Empty;
-    }
-
-    private class Permission
-    {
-        public string permissionName { get; set; } = string.Empty;
-        public string value { get; set; } = string.Empty;
+        public string? error { get; set; }
+        public string? error_description { get; set; }
     }
 }
