@@ -3,42 +3,46 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="PrintLabels.LoginPage"
-             BackgroundColor="#f0f0f0">
+             BackgroundColor="#f0f2f5">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="24" VerticalOptions="Center">
+        <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
 
-            <!-- Logo & Branding -->
-            <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
-                <!-- EXCEL text in red -->
-                <Label Text="EXCEL"
-                       FontSize="48" FontAttributes="Bold" TextColor="#e3000f"
-                       HorizontalOptions="Center" FontFamily="Arial"/>
-                <!-- Distribution, LLC in white pill -->
-                <Border Stroke="Transparent" StrokeShape="RoundRectangle 12"
-                        Background="#e3000f" Padding="16,6" HorizontalOptions="Center">
-                    <Label Text="Distribution, LLC"
-                           FontSize="16" TextColor="White"
+            <!-- Logo Box -->
+            <Border Stroke="#e0e0e0" StrokeShape="RoundRectangle 12"
+                    Background="White" Padding="20,16" HorizontalOptions="Center">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+                    <!-- EXCEL in red -->
+                    <Label Text="EXCEL"
+                           FontSize="44" FontAttributes="Bold" TextColor="#e3000f"
                            HorizontalOptions="Center" FontFamily="Arial"/>
-                </Border>
-            </VerticalStackLayout>
+                    <!-- Red pill -->
+                    <Border Stroke="Transparent" StrokeShape="RoundRectangle 12"
+                            Background="#e3000f" Padding="14,6" HorizontalOptions="Center">
+                        <Label Text="Distribution, LLC"
+                               FontSize="15" TextColor="White"
+                               HorizontalOptions="Center" FontFamily="Arial"/>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
 
             <!-- Identity Provider subtitle -->
             <Label Text="Excel Identity Provider"
                    FontSize="13" TextColor="#666666"
-                   HorizontalOptions="Center" Margin="0,4,0,8"
+                   HorizontalOptions="Center"
                    FontFamily="Arial"/>
 
             <!-- Login Card -->
             <Border Stroke="#e0e0e0" StrokeShape="RoundRectangle 12"
-                    Background="White" Padding="28,24"
+                    Background="White" Padding="24,20"
                     Shadow="0,2,8,#20000000">
-                <VerticalStackLayout Spacing="18">
+                <VerticalStackLayout Spacing="16">
 
-                    <!-- Title -->
+                    <!-- Title with separator -->
                     <Label Text="Log in"
                            FontSize="22" FontAttributes="Bold" TextColor="#222222"
                            FontFamily="Arial"/>
+                    <BoxView HeightRequest="1" Color="#e0e0e0" HorizontalOptions="Fill"/>
 
                     <!-- Username field -->
                     <VerticalStackLayout Spacing="6">
@@ -46,16 +50,16 @@
                                FontSize="13" TextColor="#444444"
                                FontFamily="Arial"/>
                         <Border Stroke="#d0d0d0" StrokeShape="RoundRectangle 8"
-                                Background="#fafafa" Padding="4,0">
+                                Background="White" Padding="4,0">
                             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" Padding="10,0">
-                                <!-- User icon -->
-                                <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999"/>
                                 <Entry x:Name="UsernameEntry"
                                        Placeholder="Username" PlaceholderColor="#aaaaaa"
                                        TextColor="#333333"
                                        Keyboard="Email"
                                        Completed="OnUsernameCompleted"
                                        BackgroundColor="Transparent"/>
+                                <!-- User icon (purple, on right) -->
+                                <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#9b59b6"/>
                             </HorizontalStackLayout>
                         </Border>
                     </VerticalStackLayout>
@@ -66,20 +70,18 @@
                                FontSize="13" TextColor="#444444"
                                FontFamily="Arial"/>
                         <Border Stroke="#d0d0d0" StrokeShape="RoundRectangle 8"
-                                Background="#fafafa" Padding="4,0">
+                                Background="White" Padding="4,0">
                             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" Padding="10,0">
-                                <!-- Lock icon -->
-                                <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999"/>
                                 <Entry x:Name="PasswordEntry"
                                        Placeholder="Password" PlaceholderColor="#aaaaaa"
                                        TextColor="#333333"
                                        IsPassword="True"
                                        Completed="OnLoginClicked"
                                        BackgroundColor="Transparent"/>
-                                <!-- Eye toggle -->
+                                <!-- Lock icon (orange, right) + Eye toggle -->
+                                <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#f39c12"/>
                                 <Label x:Name="EyeIcon"
-                                       Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999"
-                                       HorizontalOptions="End" VerticalOptions="Center">
+                                       Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer Tapped="OnEyeIconTapped" />
                                     </Label.GestureRecognizers>
@@ -92,10 +94,10 @@
                     <Label x:Name="ErrorLabel"
                            TextColor="#e3000f" FontSize="13"
                            HorizontalOptions="Start"
-                           IsVisible="False" Margin="0,4,0,0"
+                           IsVisible="False"
                            FontFamily="Arial"/>
 
-                    <!-- Login Button -->
+                    <!-- Sign In Button -->
                     <Border Stroke="Transparent" StrokeShape="RoundRectangle 25"
                             Background="#1a2b4c" HorizontalOptions="Fill">
                         <Button x:Name="LoginButton"
