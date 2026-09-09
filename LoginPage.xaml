@@ -8,23 +8,11 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
 
-            <!-- Logo Box -->
-            <Border Stroke="#e0e0e0" StrokeShape="RoundRectangle 12"
-                    Background="White" Padding="20,16" HorizontalOptions="Center">
-                <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
-                    <!-- EXCEL in red -->
-                    <Label Text="EXCEL"
-                           FontSize="44" FontAttributes="Bold" TextColor="#e3000f"
-                           HorizontalOptions="Center" FontFamily="Arial"/>
-                    <!-- Red pill -->
-                    <Border Stroke="Transparent" StrokeShape="RoundRectangle 12"
-                            Background="#e3000f" Padding="14,6" HorizontalOptions="Center">
-                        <Label Text="Distribution, LLC"
-                               FontSize="15" TextColor="White"
-                               HorizontalOptions="Center" FontFamily="Arial"/>
-                    </Border>
-                </VerticalStackLayout>
-            </Border>
+            <!-- Logo Image -->
+            <Image Source="excel_logo.png"
+                   HorizontalOptions="Center"
+                   HeightRequest="80"
+                   Aspect="AspectFit"/>
 
             <!-- Identity Provider subtitle -->
             <Label Text="Excel Identity Provider"
