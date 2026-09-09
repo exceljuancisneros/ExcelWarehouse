@@ -38,17 +38,21 @@
                                FontSize="13" TextColor="#444444"
                                FontFamily="Arial"/>
                         <Border Stroke="#d0d0d0" StrokeShape="RoundRectangle 8"
-                                Background="White" Padding="4,0">
-                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" Padding="10,0">
+                                Background="White">
+                            <Grid ColumnDefinitions="*,Auto">
                                 <Entry x:Name="UsernameEntry"
                                        Placeholder="Username" PlaceholderColor="#aaaaaa"
                                        TextColor="#333333"
                                        Keyboard="Email"
                                        Completed="OnUsernameCompleted"
-                                       BackgroundColor="Transparent"/>
+                                       BackgroundColor="Transparent"
+                                       Grid.Column="0" Margin="12,0"/>
                                 <!-- User icon (purple, on right) -->
-                                <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#9b59b6"/>
-                            </HorizontalStackLayout>
+                                <Border Stroke="Transparent" StrokeShape="RoundRectangle 8 0 0 8"
+                                        Background="#f3e5f5" Grid.Column="1">
+                                    <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#9b59b6" Margin="8,12"/>
+                                </Border>
+                            </Grid>
                         </Border>
                     </VerticalStackLayout>
 
@@ -58,23 +62,29 @@
                                FontSize="13" TextColor="#444444"
                                FontFamily="Arial"/>
                         <Border Stroke="#d0d0d0" StrokeShape="RoundRectangle 8"
-                                Background="White" Padding="4,0">
-                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" Padding="10,0">
+                                Background="White">
+                            <Grid ColumnDefinitions="*,Auto">
                                 <Entry x:Name="PasswordEntry"
                                        Placeholder="Password" PlaceholderColor="#aaaaaa"
                                        TextColor="#333333"
                                        IsPassword="True"
                                        Completed="OnLoginClicked"
-                                       BackgroundColor="Transparent"/>
-                                <!-- Lock icon (orange, right) + Eye toggle -->
-                                <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#f39c12"/>
-                                <Label x:Name="EyeIcon"
-                                       Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999">
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnEyeIconTapped" />
-                                    </Label.GestureRecognizers>
-                                </Label>
-                            </HorizontalStackLayout>
+                                       BackgroundColor="Transparent"
+                                       Grid.Column="0" Margin="12,0"/>
+                                <!-- Lock icon (orange) + Eye toggle (gray) on right -->
+                                <Border Stroke="Transparent" StrokeShape="RoundRectangle 8 0 0 8"
+                                        Background="#fff8e1" Grid.Column="1">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#f39c12" Margin="8,12"/>
+                                        <Label x:Name="EyeIcon"
+                                               Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999" Margin="8,12">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnEyeIconTapped" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </Grid>
                         </Border>
                     </VerticalStackLayout>
 
