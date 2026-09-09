@@ -47,10 +47,10 @@
                                        Completed="OnUsernameCompleted"
                                        BackgroundColor="Transparent"
                                        Grid.Column="0" Margin="12,0"/>
-                                <!-- User icon (purple, on right) -->
+                                <!-- User icon in gray section -->
                                 <Border Stroke="Transparent" StrokeShape="RoundRectangle 8 0 0 8"
-                                        Background="#f3e5f5" Grid.Column="1">
-                                    <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#9b59b6" Margin="8,12"/>
+                                        Background="#f0f0f0" Grid.Column="1">
+                                    <Label Text="&#xf007;" FontFamily="FontAwesome" FontSize="18" TextColor="#666666" Margin="10,12"/>
                                 </Border>
                             </Grid>
                         </Border>
@@ -63,26 +63,28 @@
                                FontFamily="Arial"/>
                         <Border Stroke="#d0d0d0" StrokeShape="RoundRectangle 8"
                                 Background="White">
-                            <Grid ColumnDefinitions="*,Auto">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
                                 <Entry x:Name="PasswordEntry"
                                        Placeholder="Password" PlaceholderColor="#aaaaaa"
                                        TextColor="#333333"
                                        IsPassword="True"
                                        Completed="OnLoginClicked"
                                        BackgroundColor="Transparent"
-                                       Grid.Column="0" Margin="12,0"/>
-                                <!-- Lock icon (orange) + Eye toggle (gray) on right -->
+                                       Grid.Column="0" Margin="12,0"
+                                       TextChanged="OnPasswordTextChanged"/>
+                                <!-- Eye icon - transparent, visible when typing, left of lock -->
+                                <Label x:Name="EyeIcon"
+                                       Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#666666"
+                                       Grid.Column="1" Margin="6,0" HorizontalOptions="Center" VerticalOptions="Center"
+                                       IsVisible="False">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnEyeIconTapped" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <!-- Lock icon in gray section -->
                                 <Border Stroke="Transparent" StrokeShape="RoundRectangle 8 0 0 8"
-                                        Background="#fff8e1" Grid.Column="1">
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#f39c12" Margin="8,12"/>
-                                        <Label x:Name="EyeIcon"
-                                               Text="&#xf06e;" FontFamily="FontAwesome" FontSize="18" TextColor="#999999" Margin="8,12">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnEyeIconTapped" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                    </HorizontalStackLayout>
+                                        Background="#f0f0f0" Grid.Column="2">
+                                    <Label Text="&#xf023;" FontFamily="FontAwesome" FontSize="18" TextColor="#666666" Margin="10,12"/>
                                 </Border>
                             </Grid>
                         </Border>

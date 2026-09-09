@@ -89,7 +89,7 @@ public partial class LoginPage : ContentPage
         EyeIcon.Text = _isPasswordVisible ? "\uf070" : "\uf06e";
     }
 
-    private async void OnLoginClicked(object sender, EventArgs e)
+    private void OnLoginClicked(object sender, EventArgs e)
     {
         LoginButton.IsEnabled = false;
         ErrorLabel.IsVisible = false;
@@ -113,12 +113,12 @@ public partial class LoginPage : ContentPage
             return;
         }
 
-        await Task.Delay(300);
+        Task.Delay(300).Wait();
 
-        var (isAuthenticated, errorMessage, permissions) = await UserRepository.AuthenticateAsync(username, password);
+        var (isAuthenticated, errorMessage, permissions) = UserRepository.AuthenticateAsync(username, password).Result;
         if (isAuthenticated)
         {
-            await Navigation.PushAsync(new MenuPage(username, permissions));
+            Navigation.PushAsync(new MenuPage(username, permissions)).Wait();
         }
         else
         {
@@ -127,5 +127,15 @@ public partial class LoginPage : ContentPage
         }
 
         LoginButton.IsEnabled = true;
+    }
+
+    private void OnPasswordTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var password = (sender as Entry)?.Text;
+        EyeIcon.IsVisible = !string.IsNullOrEmpty(password);
+        if (string.IsNullOrEmpty(password))
+        {
+            PasswordEntry.IsPassword = true;
+        }
     }
 }
