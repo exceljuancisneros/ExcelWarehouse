@@ -37,7 +37,7 @@ public static class UserRepository
 
             var permissions = ExtractPermissions(token.access_token);
             if (!permissions.CanAccess)
-                return (false, "No tenés permiso para acceder a esta aplicación.", null);
+                return (false, "You do not have permission to access this application.", null);
 
             await SecureStorage.SetAsync("access_token", token.access_token);
             await SecureStorage.SetAsync("refresh_token", token.refresh_token ?? string.Empty);
@@ -48,11 +48,11 @@ public static class UserRepository
         }
         catch (TaskCanceledException)
         {
-            return (false, "Se agotó el tiempo de conexión con el servidor. Verificá tu red.", null);
+            return (false, "API connection timed out. Please check your network connection.", null);
         }
         catch (Exception)
         {
-            return (false, "No se pudo conectar con el servidor. Verificá tu red.", null);
+            return (false, "Could not connect to the server. Please check your network connection.", null);
         }
     }
 
